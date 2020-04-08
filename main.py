@@ -3,13 +3,14 @@ import socketserver
 import json
 from routers import convert
 from logger import get_logger
+from os import environ
 
 logger = get_logger()
 
-PORT = 8081
+PORT = environ.get("PORT", 8080)
 
 
-class APIHandler(http.server.SimpleHTTPRequestHandler):
+class APIHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/convert":
             try:
@@ -48,5 +49,5 @@ class APIHandler(http.server.SimpleHTTPRequestHandler):
 
 
 with socketserver.TCPServer(("0.0.0.0", PORT), APIHandler) as httpd:
-    logger.info("serving port", PORT)
+    logger.info(f"Serving port {PORT}")
     httpd.serve_forever()
